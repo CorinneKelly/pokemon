@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 class Home extends React.Component {
   count;
@@ -49,14 +50,13 @@ class Home extends React.Component {
       {
         const pokemonName = this.capitalize(pokemon.name)
         return(
-          <div className={'listItem'}>
-            <img className={'listItemImg'} src={'https://via.placeholder.com/200'} alt={pokemonName}/>
+          <Link to={`pokemon/${pokemon.name}`} className={'listItem'} >
+            <img crossOrigin={'Anonymous'} className={'listItemImg'} src={'https://picsum.photos/200'} alt={pokemonName}/>
             <div>{pokemonName}</div>
-          </div>
+          </Link>
       )}
     )
   }
-
 
   render () {
     return (
