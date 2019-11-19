@@ -1,5 +1,6 @@
 import React from 'react'
 import {GoogleApiWrapper, Map, Marker} from 'google-maps-react';
+import PokemonStore from '../stores/PokemonStore'
 
 const API_KEY = 'HHko9Fuxf293b3w56zAJ89s3IcO9D5enaEPIg86l'
 
@@ -7,10 +8,18 @@ class Pokemon extends React.Component {
   state = {
     pokemon: null,
     saved: true,
-    locations: []
+    locations: [],
+    currentBag: !!window.localStorage.getItem('myBag') ? window.localStorage.getItem('myBag') : ''
   }
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
+    if(!!PokemonStore.pokemon[this.props.match.params.name]) {
+
+      this.setState({
+        pokemon: PokemonStore.pokemon[this.props.match.params.name]
+      })
+      return;
+    }
     this.fetchPokemonData()
   }
 
@@ -24,6 +33,7 @@ class Pokemon extends React.Component {
       this.fetchPokemonLocation(responseJSON.id)
     })
   }
+
 
   fetchPokemonLocation = async (pokemonID) => {
     const options = {
@@ -46,9 +56,12 @@ class Pokemon extends React.Component {
   }
 
   onToggleSave = () => {
-    const currentBag = window.localStorage.getItem('myBag')
-    const updatedBag = currentBag.includes(this.state.pokemon.name) ? currentBag.filter(name => name !== this.state.pokemon.name) : [...currentBag, this.state.pokemon.name]
+    const updatedBag = this.state.currentBag.includes(this.state.pokemon.name) ? this.state.currentBag.split(', ').filter(name => name !== this.state.pokemon.name).join(', ') : `${this.state.currentBag}, ${this.state.pokemon.name}`
     window.localStorage.setItem('myBag', updatedBag)
+    //NOTE: setting state so that screen will re-render
+    this.setState({
+      currentBag: updatedBag
+    })
   }
   render () {
     const renderMap = this.state.locations.length > 0
@@ -66,7 +79,7 @@ class Pokemon extends React.Component {
           <div>In Bag:
             <input type="checkbox" name="saved"
                value={this.state.saved}
-               checked={currentBag.includes(this.state.pokemon.name)}
+               checked={!!currentBag && currentBag.includes(this.state.pokemon.name)}
                onChange={this.onToggleSave} />
 
           </div>
@@ -83,7 +96,7 @@ class Pokemon extends React.Component {
           }}
           zoom={8}
           style={{height: '500px', width: '500px'}}>
-            {this.state.locations.map(location => <Marker position={{lat: location.split(',')[0], lng: location.split(',')[1]}} />)}
+            {this.state.locations.map((location, index) => <Marker position={{lat: location.split(',')[0], lng: location.split(',')[1]}} key={index} />)}
           </Map>}
 
         </div>

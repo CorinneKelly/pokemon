@@ -9,7 +9,9 @@ const Home = observer(class Home extends React.Component {
   state = {
     nextPokemonCall: 'https://pokeapi.co/api/v2/pokemon/',
     query: '',
-    matches: []
+    matches: [],
+    bagCollection: !!window.localStorage.getItem('myBag') ? window.localStorage.getItem('myBag').split(', ').filter(name => !!name && name.length > 0) : [],
+    showBagCollection: false
   }
 
   componentDidMount = () => {
@@ -53,7 +55,7 @@ const Home = observer(class Home extends React.Component {
 
   fetchAndSavePokemonData = (pokemonInfo) => {
     //NOTE:saving here so page can load name before image and other info are fetched
-    PokemonStore.savePokemon(pokemonInfo)
+    // PokemonStore.savePokemon(pokemonInfo)
     fetch(pokemonInfo.url).then(async response => {
       const responseJSON = await response.json()
       PokemonStore.savePokemon(responseJSON)
@@ -65,7 +67,7 @@ const Home = observer(class Home extends React.Component {
   }
 
   renderPokemonList = () => {
-    const pokemons = this.state.query.length > 0 ? this.state.matches : Object.keys(PokemonStore.pokemon)
+    const pokemons = this.state.showBagCollection ? this.state.bagCollection : this.state.query.length > 0 ? this.state.matches : Object.keys(PokemonStore.pokemon)
     return pokemons.map((pokemonName, index) => {
       const pokemonData = PokemonStore.pokemon[pokemonName]
       const pokemonNameFormatted = this.capitalize(pokemonData.name)
@@ -81,7 +83,8 @@ const Home = observer(class Home extends React.Component {
     )
   }
 
-  search = () => {
+  search = (e) => {
+    e.stopPropagation()
     const el = document.getElementById('search')
     const query = el.value
     if(query.length === 0) {
@@ -105,10 +108,28 @@ const Home = observer(class Home extends React.Component {
     })
   }
 
+  showAllPokemon = () => {
+    this.setState({
+      showBagCollection: false,
+    })
+  }
+
+  showBag = () => {
+    this.setState({
+      showBagCollection: true,
+    })
+  }
+
   render () {
     return (
-      <div>
-      <input id={'search'} type="text" onKeyDown={this.search} />
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        <div >
+          <button onClick={this.showAll}>All</button>
+          <button onClick={this.showBag}>Bag</button>
+          </div>
+          <input id={'search'} type="text" onKeyDown={this.search} />
+      </div>
 
         <div className={'listWrapper'}>
           {this.renderPokemonList()}
