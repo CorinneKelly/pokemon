@@ -1,7 +1,7 @@
 {
   "name": "pokemon",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "google-maps-react": "^2.0.2",
     "mobx": "^5.15.0",
@@ -40,5 +40,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/CorinneKelly/pokemon.git"
-},
+  }
 }
