@@ -1,12 +1,15 @@
 import React from 'react'
 import { BrowserRouter as  Link } from 'react-router-dom';
+import { observer } from 'mobx-react';
+import PokemonStore from '../stores/PokemonStore'
 
-class Home extends React.Component {
+
+const Home = observer(class Home extends React.Component {
   count;
   state = {
     nextPokemonCall: 'https://pokeapi.co/api/v2/pokemon/',
     count: 0,
-    pokemon: []
+    pokemons: []
   }
 
   componentDidMount = () => {
@@ -28,17 +31,35 @@ class Home extends React.Component {
   }
 
   fetchPokemon = async () => {
+    if(this.state.pokemons.length >= 151) {
+      return;
+    }
     fetch(this.state.nextPokemonCall).then(async response => {
 
       const responseJSON = await response.json()
       if(!this.count) {
         this.count = responseJSON.count
       }
+
+      responseJSON.results.map(pokemon =>
+        this.fetchAndSavePokemonData(pokemon)
+      )
+
+      const pokemons = this.state.pokemons.length + 20 >= 151 ? this.state.pokemons.concat(responseJSON.results).slice(0, 151) :  [...this.state.pokemons, ...responseJSON.results]
+
+      console.log({pokemons})
       this.setState({
-        pokemon: [...this.state.pokemon, ...responseJSON.results],
+        pokemons,
         nextPokemonCall: responseJSON.next,
       })
     })
+  }
+
+  fetchAndSavePokemonData = (pokemonInfo) => {
+      fetch(pokemonInfo.url).then(async response => {
+        const responseJSON = await response.json()
+        PokemonStore.savePokemon(responseJSON)
+      })
   }
 
   capitalize = (name) => {
@@ -46,13 +67,15 @@ class Home extends React.Component {
   }
 
   renderPokemonList = () => {
-    return this.state.pokemon.map(pokemon =>
+    return this.state.pokemons.map(pokemon =>
       {
         const pokemonName = this.capitalize(pokemon.name)
         return(
-          <Link to={`pokemon/${pokemon.name}`} className={'listItem'} >
-            <img crossOrigin={'Anonymous'} className={'listItemImg'} src={'https://picsum.photos/200'} alt={pokemonName}/>
+          <Link to={`pokemon/${pokemon.name}`} >
+          <div  className={'listItem'}>
+            <img crossOrigin={'Anonymous'} className={'listItemImg'} src={PokemonStore.pokemon[pokemon.name] ? PokemonStore.pokemon[pokemon.name].img : ''} alt={pokemonName}/>
             <div>{pokemonName}</div>
+            </div>
           </Link>
       )}
     )
@@ -64,6 +87,6 @@ class Home extends React.Component {
         {this.renderPokemonList()}
       </div>
   )}
-}
+})
 
 export default Home;

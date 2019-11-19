@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {GoogleApiWrapper, Map, Marker} from 'google-maps-react';
 
 const API_KEY = 'HHko9Fuxf293b3w56zAJ89s3IcO9D5enaEPIg86l'
