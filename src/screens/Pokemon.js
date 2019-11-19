@@ -46,13 +46,13 @@ class Pokemon extends React.Component {
   }
 
   onToggleSave = () => {
-    this.setState({
-      saved: !this.state.saved
-    })
+    const currentBag = window.localStorage.getItem('myBag')
+    const updatedBag = currentBag.includes(this.state.pokemon.name) ? currentBag.filter(name => name !== this.state.pokemon.name) : [...currentBag, this.state.pokemon.name]
+    window.localStorage.setItem('myBag', updatedBag)
   }
   render () {
     const renderMap = this.state.locations.length > 0
-    console.log({state: this.state})
+    const currentBag = window.localStorage.getItem('myBag')
     if (!this.state.pokemon) {
       return null;
     }
@@ -66,7 +66,7 @@ class Pokemon extends React.Component {
           <div>In Bag:
             <input type="checkbox" name="saved"
                value={this.state.saved}
-               checked={this.state.saved}
+               checked={currentBag.includes(this.state.pokemon.name)}
                onChange={this.onToggleSave} />
 
           </div>

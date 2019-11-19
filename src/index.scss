@@ -25,8 +25,8 @@ code {
 }
 
 .listItemImg {
-  height: 200px;
-  width: 200px;
+  height: 100px;
+  width: 100px;
   margin-bottom: 10px;
 }
 
@@ -43,4 +43,9 @@ code {
   justify-content: space-between;
   flex-direction: row;
   align-items: flex-start;
+}
+
+input {
+  border: 1px solid black;
+  align-self: center;
 }

@@ -4,7 +4,15 @@ class ObservablePokemonStore {
   pokemon = {};
 
   savePokemon = (pokemonData: Object) => {
-    this.pokemon[pokemonData.name] = {...pokemonData, img: pokemonData.sprites.front_default}
+    //NOTE: captures only the original 151 pokemon
+    const pokemonDataCopy = this.pokemon
+    const newPokemonData = pokemonDataCopy[pokemonData.name] = pokemonData
+    const newPokemonDataCount = Object.keys(newPokemonData).length
+    if(newPokemonDataCount >= 151) {
+      return;
+    }
+
+    this.pokemon[pokemonData.name] = pokemonData
   };
 }
 
