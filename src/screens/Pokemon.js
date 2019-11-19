@@ -107,5 +107,5 @@ class Pokemon extends React.Component {
 
 
 export default GoogleApiWrapper({
-  apiKey: ('AIzaSyCN8YHUZl7L4bY6MGm1ofUhQBIoyWjQiLc')
+  apiKey: ('AIzaSyDYnT1nEHlb0XtfEjfcKY_J-zwnIOUC2VU')
 })(Pokemon)
