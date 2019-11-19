@@ -37,3 +37,10 @@ code {
   justify-content: center;
   align-items: center;
 }
+
+.flexRow {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: flex-start;
+}
